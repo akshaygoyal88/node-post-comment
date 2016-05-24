@@ -22,6 +22,7 @@ function getPosts(res) {
         res.json(posts); // return all todos in JSON format
     });
 };
+
 module.exports = function (app) {
 
     // api ---------------------------------------------------------------------
@@ -36,6 +37,20 @@ module.exports = function (app) {
     app.get('/api/posts', function (req, res) {
         // use mongoose to get all todos in the database
         getPosts(res);
+    });
+
+    app.get('/api/comments/:post_id', function (req, res) {
+        // use mongoose to get all todos in the database
+        console.log(req.params)
+       Comment.find(function (err, todos) {
+
+        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+        if (err) {
+            res.send(err);
+        }
+
+        res.json(todos); // return all todos in JSON format
+    });
     });
 
     // create todo and send back all todos after creation
@@ -69,6 +84,21 @@ module.exports = function (app) {
 
     });
 
+    app.post('/api/comments/:post_id', function (req, res) {
+        console.log(req.body)
+        // create a todo, information comes from AJAX request from Angular
+        Comment.create({
+            text: req.body.text,
+            post_id: req.body.post_id
+        }, function (err, todo) {
+            if (err)
+                res.send(err);
+
+            // get and return all the todos after you create another
+            getPosts(res);
+        });
+
+    });
     // update todo and send back all todos after update
     app.put('/api/todos/:todo_id', function (req, res) {
         console.log(req.body)
@@ -102,9 +132,9 @@ module.exports = function (app) {
             getTodos(res);
         });
     });
+    
     // application -------------------------------------------------------------
     app.get('*', function (req, res) {
         res.sendFile(__dirname + '/public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
     });
-    
 };

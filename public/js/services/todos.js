@@ -32,4 +32,13 @@ angular.module('todoService', [])
 				return $http.delete('/api/posts/' + id);
 			}
 		}
+	}]).factory('Comments', ['$http',function($http) {
+		return {
+			create : function(post_id,Data) {
+				return $http.post('/api/comments/'+post_id, Data);
+			},
+			get : function(post_id) {
+				return $http.get('/api/comments/'+post_id);
+			}
+		}
 	}]);

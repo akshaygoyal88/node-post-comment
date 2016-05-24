@@ -76,9 +76,10 @@ angular.module('todoController', [])
 					$scope.todos = data; // assign our new list of todos
 				});
 		};
-	}]).controller('postsController', ['$scope','$http','Posts', function($scope, $http, Posts) {
+	}]).controller('postsController', ['$scope','$http','Posts','Comments', function($scope, $http, Posts, Comments) {
 		$scope.formData = {};
 		$scope.formData_update = {};
+		$scope.formData_comment = {};
 		$scope.loading = true;
 
 		// GET =====================================================================
@@ -89,7 +90,7 @@ angular.module('todoController', [])
 				$scope.posts = data;
 				$scope.loading = false;
 			});
-
+		
 		// CREATE ==================================================================
 		// when submitting the add form, send the text to the node API
 		$scope.createPost = function() {
@@ -106,6 +107,27 @@ angular.module('todoController', [])
 					.success(function(data) {
 						$scope.loading = false;
 						$scope.formData = {}; // clear the form so our user is ready to enter another
+						$scope.posts = data; // assign our new list of posts
+					});
+			// }
+		};
+		
+		// CREATE ==================================================================
+		// when submitting the add form, send the text to the node API
+		$scope.createComment = function(post_id) {
+
+			// validate the formData to make sure that something is there
+			// if form is empty, nothing will happen
+			// if ($scope.formData.title != undefined) {
+				$scope.loading = true;
+
+				// call the create function from our service (returns a promise object)
+				Comments.create(post_id,$scope.formData_comment)
+
+					// if successful creation, call our get function to get all the new posts
+					.success(function(data) {
+						$scope.loading = false;
+						$scope.formData_comment = {}; // clear the form so our user is ready to enter another
 						$scope.posts = data; // assign our new list of posts
 					});
 			// }
@@ -151,4 +173,9 @@ angular.module('todoController', [])
 					$scope.posts = data; // assign our new list of posts
 				});
 		};
+		$scope.getcomments = function(post_id){
+			Comments.get(post_id).success(function(data){
+				$scope.comments = data;
+			})
+		}
 	}]);;

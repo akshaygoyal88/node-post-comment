@@ -21,10 +21,11 @@ app.use(bodyParser.json({type: 'application/vnd.api+json'})); // parse applicati
 app.use(methodOverride('X-HTTP-Method-Override')); // override with the X-HTTP-Method-Override header in the request
 
 app.get('/posts', function (req, res) {
-        // res.sendFile(path.join(__dirname, '../public', 'posts.html'));
-        res.sendFile(__dirname + '/public/posts.html'); // load the single view file (angular will handle the page changes on the front-end)
-        // res.sendFile('../public/posts.html'); // load the single view file (angular will handle the page changes on the front-end)
-    });
+    // res.sendFile(path.join(__dirname, '../public', 'posts.html'));
+    res.sendFile(__dirname + '/public/posts.html'); // load the single view file (angular will handle the page changes on the front-end)
+    // res.sendFile('../public/posts.html'); // load the single view file (angular will handle the page changes on the front-end)
+});
+
 // routes ======================================================================
 require('./app/routes.js')(app);
 

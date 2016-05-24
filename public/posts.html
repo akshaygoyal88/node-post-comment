@@ -48,12 +48,27 @@
 						<input type="checkbox"  ng-click="editPost(post._id)"> {{ post.title }}</input>
 						<button  ng-click="deletePost(post._id)">delete</button>
 					</label>
+					<div ng-init="getcomments(post._id)">
+						<div ng-repeat="comment in comments" > 
+				       <a href="" class="size13">{{comment.text}}</a> 
+				    </div>
+			    </div>
+					<form>
+						<label>comments</label>
+						<div class="form-group">
+							<!-- BIND THIS VALUE TO formData.title IN ANGULAR -->
+							<input type="hidden" ng-model="formData_comment.post_id" value="{{post._id}}">
+							<input type="text" class="form-control input-lg text-center" placeholder="I want to buy a puppy that will love me forever" ng-model="formData_comment.text">
+							
+						</div>
+						<!-- createToDo() WILL CREATE NEW TODOS -->
+						<button type="submit" class="btn btn-primary btn-lg" ng-click="createComment(post._id)">Add</button>
+					</form>
+
+					<p class="text-center" ng-show="loading">
+						<span class="fa fa-spinner fa-spin fa-3x"></span>
+					</p>
 				</div>
-
-				<p class="text-center" ng-show="loading">
-					<span class="fa fa-spinner fa-spin fa-3x"></span>
-				</p>
-
 			</div>
 		</div>
 
