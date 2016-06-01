@@ -1,4 +1,4 @@
-var Todo = require('./models/todo');
+require('./models/models');
 var path = require('path');
 function getTodos(res) {
     Todo.find(function (err, todos) {
@@ -13,7 +13,6 @@ function getTodos(res) {
 };
 function getPosts(res) {
     Post.find(function (err, posts) {
-
         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
         if (err) {
             res.send(err);
@@ -42,15 +41,13 @@ module.exports = function (app) {
     app.get('/api/comments/:post_id', function (req, res) {
         // use mongoose to get all todos in the database
         console.log(req.params)
-       Comment.find(function (err, todos) {
-
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err) {
-            res.send(err);
-        }
-
-        res.json(todos); // return all todos in JSON format
-    });
+       Comment.find({post_id: req.params.post_id}, function (err, comments){
+          // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+          if (err) {
+              res.send(err);
+          }
+          res.json(comments); // return all todos in JSON format
+      });
     });
 
     // create todo and send back all todos after creation
@@ -84,18 +81,20 @@ module.exports = function (app) {
 
     });
 
-    app.post('/api/comments/:post_id', function (req, res) {
-        console.log(req.body)
+    app.post('/api/comments', function (req, res) {
+        console.log('req.body',req.body);
         // create a todo, information comes from AJAX request from Angular
         Comment.create({
-            text: req.body.text,
-            post_id: req.body.post_id
+            text: req.body.commentText,
+            post_id: req.body.postID
         }, function (err, todo) {
-            if (err)
-                res.send(err);
+            if (err){
+              return  res.send(err);
+            }
+                return res.send(todo);
 
             // get and return all the todos after you create another
-            getPosts(res);
+            // getPosts(res);
         });
 
     });
@@ -120,7 +119,37 @@ module.exports = function (app) {
 
         });
     });
+    app.put('/api/posts/:post_id', function (req, res) {
+        console.log(req.body)
+         // use our bear model to find the bear we want
+        Post.findById(req.params.post_id, function(err, post) {
 
+            if (err)
+                res.send(err);
+            
+            post.title = req.body.title;
+
+            // save the bear
+            post.save(function(err) {
+                if (err)
+                    res.send(err);
+                  getPosts(res);
+                // res.json({ message: 'Todo updated!' });
+            });
+
+        });
+    });
+     // delete a post
+    app.delete('/api/posts/:post_id', function (req, res) {
+        Post.remove({
+            _id: req.params.post_id
+        }, function (err, todo) {
+            if (err)
+                res.send(err);
+
+            getTodos(res);
+        });
+    });
     // delete a todo
     app.delete('/api/todos/:todo_id', function (req, res) {
         Todo.remove({

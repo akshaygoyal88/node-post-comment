@@ -30,13 +30,12 @@
 
 </head>
 <!-- SET THE CONTROLLER -->
-<body ng-controller="postsController">
+<body ng-controller="postsController" ng-init="getposts();">
 	<div class="container">
-	ddddddddddddddd
 
 		<!-- HEADER AND TODO COUNT -->
 		<div class="jumbotron text-center">
-			<h1>I'm a Post-aholic <span class="label label-info">{{ posts.length }}</span></h1>
+			<h1>Posts List<span class="label label-info">{{ posts.length }}</span></h1>
 		</div>
 
 		<!-- TODO LIST -->
@@ -45,24 +44,22 @@
 				<!-- LOOP OVER THE TODOS IN $scope.posts -->
 				<div class="checkbox" ng-repeat="post in posts">
 					<label>
-						<input type="checkbox"  ng-click="editPost(post._id)"> {{ post.title }}</input>
+						<input type="checkbox" ng-click="editPost(post._id)"> {{ post.title }}</input>
 						<button  ng-click="deletePost(post._id)">delete</button>
 					</label>
-					<div ng-init="getcomments(post._id)">
-						<div ng-repeat="comment in comments" > 
+						<div ng-repeat="comment in post.comments" > 
 				       <a href="" class="size13">{{comment.text}}</a> 
 				    </div>
-			    </div>
 					<form>
-						<label>comments</label>
+						<label>Add new comments</label>
 						<div class="form-group">
 							<!-- BIND THIS VALUE TO formData.title IN ANGULAR -->
-							<input type="hidden" ng-model="formData_comment.post_id" value="{{post._id}}">
-							<input type="text" class="form-control input-lg text-center" placeholder="I want to buy a puppy that will love me forever" ng-model="formData_comment.text">
+							<input type="hidden" ng-model="post._id" value="{{post._id}}">
+							<input type="text" class="form-control input-lg text-center" placeholder="I want to buy a puppy that will love me forever" ng-model="comment.text">
 							
 						</div>
 						<!-- createToDo() WILL CREATE NEW TODOS -->
-						<button type="submit" class="btn btn-primary btn-lg" ng-click="createComment(post._id)">Add</button>
+						<button type="submit" class="btn btn-primary btn-lg" ng-click="createComment(post._id,comment.text)">Add</button>
 					</form>
 
 					<p class="text-center" ng-show="loading">
@@ -106,8 +103,8 @@
 		</div>
 
 		<div class="text-center text-muted">
-			<p>A demo by <a href="http://scotch.io">Scotch</a>.</p>
-			<p>Read the <a href="http://scotch.io/tutorials/javascript/creating-a-single-page-post-app-with-node-and-angular">tutorial</a>.</p>
+			<!-- <p>A demo by <a href="http://scotch.io">Scotch</a>.</p>
+			<p>Read the <a href="http://scotch.io/tutorials/javascript/creating-a-single-page-post-app-with-node-and-angular">tutorial</a>.</p> -->
 		</div>
 
 	</div>

@@ -35,10 +35,11 @@ angular.module('todoService', [])
 	}]).factory('Comments', ['$http',function($http) {
 		return {
 			create : function(post_id,Data) {
-				return $http.post('/api/comments/'+post_id, Data);
+				return $http.post('/api/comments/',{postID:post_id,commentText:Data});
 			},
 			get : function(post_id) {
-				return $http.get('/api/comments/'+post_id);
+				console.log('post_id',post_id)
+				return $http.get('/api/comments/' + post_id);
 			}
 		}
 	}]);

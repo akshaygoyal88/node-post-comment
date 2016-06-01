@@ -24,7 +24,7 @@ Comment = mongoose.model('Comment', {
         default: ''
     },
     post_id: {
-        type: Number,
+        type: String,
         default: ''
     },
     updated_at: { type: Date, default: Date.now },

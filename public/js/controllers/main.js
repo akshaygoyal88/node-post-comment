@@ -4,6 +4,10 @@ angular.module('todoController', [])
 	.controller('mainController', ['$scope','$http','Todos', function($scope, $http, Todos) {
 		$scope.formData = {};
 		$scope.formData_update = {};
+		$scope.post = {};
+		$scope.posts = {};
+		$scope.comments= [];
+
 		$scope.loading = true;
 
 		// GET =====================================================================
@@ -81,16 +85,29 @@ angular.module('todoController', [])
 		$scope.formData_update = {};
 		$scope.formData_comment = {};
 		$scope.loading = true;
+		$scope.comments = [];
+		$scope.post = [];
+		
 
 		// GET =====================================================================
 		// when landing on the page, get all posts and show them
 		// use the service to get all the posts
-		Posts.get()
-			.success(function(data) {
-				$scope.posts = data;
-				$scope.loading = false;
-			});
-		
+		$scope.getposts = function(){
+			Posts.get()
+				.success(function(data) {
+					$scope.posts = data;
+					$scope.loading = false;
+					angular.forEach($scope.posts, function(value, postkey) {
+						// $scope.post.push(value);
+						// console.log('postkey',postkey)
+						Comments.get(value._id).success(function(comments){
+							console.log('postkey',postkey)
+							$scope.posts[postkey]["comments"] = comments;
+						});
+					});
+
+				});
+		};
 		// CREATE ==================================================================
 		// when submitting the add form, send the text to the node API
 		$scope.createPost = function() {
@@ -114,21 +131,22 @@ angular.module('todoController', [])
 		
 		// CREATE ==================================================================
 		// when submitting the add form, send the text to the node API
-		$scope.createComment = function(post_id) {
-
+		$scope.createComment = function(postID,comment) {
+			console.log('postID,comment',postID,comment);
 			// validate the formData to make sure that something is there
 			// if form is empty, nothing will happen
 			// if ($scope.formData.title != undefined) {
 				$scope.loading = true;
 
 				// call the create function from our service (returns a promise object)
-				Comments.create(post_id,$scope.formData_comment)
+				Comments.create(postID,comment)
 
 					// if successful creation, call our get function to get all the new posts
 					.success(function(data) {
 						$scope.loading = false;
 						$scope.formData_comment = {}; // clear the form so our user is ready to enter another
-						$scope.posts = data; // assign our new list of posts
+						$scope.getposts();
+						// $scope.posts = data; // assign our new list of posts
 					});
 			// }
 		};
@@ -149,7 +167,8 @@ angular.module('todoController', [])
 					.success(function(data) {
 						$scope.loading = false;
 						$scope.formData_update = {}; // clear the form so our user is ready to enter another
-						$scope.posts = data; // assign our new list of posts
+						$scope.getposts();
+						// $scope.posts = data; // assign our new list of posts
 					});
 			}
 		};
@@ -158,7 +177,6 @@ angular.module('todoController', [])
 			 jQuery('#update_id').val(id);
        var arrayPosition = $scope.posts.map(function(arrayItem) { return arrayItem._id; }).indexOf(id);
        jQuery('#update_text').val($scope.posts[arrayPosition].title);
-
 		}
 
 		// DELETE ==================================================================
@@ -175,7 +193,16 @@ angular.module('todoController', [])
 		};
 		$scope.getcomments = function(post_id){
 			Comments.get(post_id).success(function(data){
-				$scope.comments = data;
+				$scope.comments = [];
+				$scope.items = data;
+				angular.forEach($scope.items, function(value, key) {
+          var val = {key: key, data: value};
+          $scope.comments.push(val);  
+          console.log($scope.comments)
+					return $scope.comments;
+      	});
 			})
+
+
 		}
 	}]);;
